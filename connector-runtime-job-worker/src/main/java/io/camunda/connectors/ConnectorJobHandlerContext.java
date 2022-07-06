@@ -5,7 +5,7 @@ import io.camunda.connector.sdk.SecretProvider;
 import io.camunda.connector.sdk.SecretStore;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
 
-import java.util.ServiceLoader;
+import java.util.Map;
 
 public class ConnectorJobHandlerContext implements ConnectorContext {
 
@@ -25,6 +25,12 @@ public class ConnectorJobHandlerContext implements ConnectorContext {
     @Override
     public <T extends Object> T getVariablesAsType(Class<T> cls) {
         return job.getVariablesAsType(cls);
+    }
+
+
+    @Override
+    public Map<String, Object> getVariablesAsMap() {
+        return job.getVariablesAsMap();
     }
 
     @Override

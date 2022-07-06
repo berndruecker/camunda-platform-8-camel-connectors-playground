@@ -4,6 +4,7 @@ import io.camunda.connector.sdk.SecretStore;
 
 public class AmqpOutboundVariables {
 
+    private String amqpUrl;
     private String destinationName;
     private String destinationType;
     private String username;
@@ -14,7 +15,8 @@ public class AmqpOutboundVariables {
         password = secretStore.replaceSecret(password);
     }
     public String getEndpointUri() {
-        return "amqp:" + getDestinationType() + ":" + getDestinationName() + "?username=" + getUsername() + "&password=RAW(" + getPassword() + ")";
+        return "amqp:" + getDestinationType() + ":" + getDestinationName();
+        //+ "?username=" + getUsername() + "&password=RAW(" + getPassword() + ")";
     }
 
 
@@ -52,4 +54,11 @@ public class AmqpOutboundVariables {
         this.destinationType = destinationType;
     }
 
+    public String getAmqpUrl() {
+        return amqpUrl;
+    }
+
+    public void setAmqpUrl(String amqpUrl) {
+        this.amqpUrl = amqpUrl;
+    }
 }

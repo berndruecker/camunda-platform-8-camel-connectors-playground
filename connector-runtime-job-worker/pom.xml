@@ -26,14 +26,14 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>io.camunda.connectors</groupId>
+			<artifactId>connector-sdk</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 		    <groupId>io.camunda</groupId>
 		    <artifactId>spring-zeebe-starter</artifactId>
 		    <version>${version.spring.zeebe}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.camunda.community.connector</groupId>
-			<artifactId>amqp-connector</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 

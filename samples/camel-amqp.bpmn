@@ -15,6 +15,7 @@
           <zeebe:input source="= &#34;queue&#34;" target="destinationType" />
           <zeebe:input source="= &#34;secrets.AMQP_USERNAME&#34;" target="username" />
           <zeebe:input source="= &#34;secrets.AMQP_PASSWORD&#34;" target="password" />
+          <zeebe:input source="= &#34;amqp://localhost:5672&#34;" target="amqpUrl" />
         </zeebe:ioMapping>
         <zeebe:taskDefinition type="io.camunda.community:amqp:1" />
       </bpmn:extensionElements>
