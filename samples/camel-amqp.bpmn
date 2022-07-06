@@ -11,10 +11,10 @@
     <bpmn:serviceTask id="Activity_02nntep" name="Send AMQP message using Camel AMQP">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:input source="= testQueue" target="destinationName" />
-          <zeebe:input source="= queue" target="destinationType" />
-          <zeebe:input source="= secrets.AMQP_USERNAME" target="username" />
-          <zeebe:input source="= secrets.AMQP_PASSWORD" target="password" />
+          <zeebe:input source="= &#34;testQueue&#34;" target="destinationName" />
+          <zeebe:input source="= &#34;queue&#34;" target="destinationType" />
+          <zeebe:input source="= &#34;secrets.AMQP_USERNAME&#34;" target="username" />
+          <zeebe:input source="= &#34;secrets.AMQP_PASSWORD&#34;" target="password" />
         </zeebe:ioMapping>
         <zeebe:taskDefinition type="io.camunda.community:amqp:1" />
       </bpmn:extensionElements>

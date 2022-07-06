@@ -1,6 +1,7 @@
 package io.camunda.connectors;
 
 import io.camunda.connector.sdk.ConnectorFunction;
+import io.camunda.connector.sdk.SecretProvider;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
 import io.camunda.zeebe.client.api.worker.JobClient;
 import io.camunda.zeebe.client.api.worker.JobHandler;
@@ -12,9 +13,11 @@ public class ConnectorJobHandler implements JobHandler {
   private static final Logger LOGGER = LoggerFactory.getLogger(ConnectorJobHandler.class);
 
   private final ConnectorFunction connectorFunction;
+  private final SecretProvider secretProvider;
 
-  public ConnectorJobHandler(ConnectorFunction connectorFunction) {
+  public ConnectorJobHandler(ConnectorFunction connectorFunction, SecretProvider secretProvider) {
     this.connectorFunction = connectorFunction;
+    this.secretProvider = secretProvider;
   }
 
   @Override
@@ -26,14 +29,14 @@ public class ConnectorJobHandler implements JobHandler {
 
     try {
 
-      Object result = connectorFunction.execute(new ConnectorJobHandlerContext(job));
+      Object result = connectorFunction.execute(new ConnectorJobHandlerContext(job, secretProvider));
       client.newCompleteCommand(job).variables(result).send().join();
-      LOGGER.debug("Completed job {}", job.getKey());
+      LOGGER.info("Completed job {}", job.getKey());
 
     } catch (Exception error) {
 
-      LOGGER.debug("Failed to process job {}", job.getKey(), error);
-      // Why no retries? 
+      LOGGER.info("Failed to process job {}", job.getKey(), error);
+      // Why no retries?
       client.newFailCommand(job).retries(0).errorMessage(error.getMessage()).send().join();
 
     }

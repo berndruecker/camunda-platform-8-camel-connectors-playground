@@ -1,6 +1,7 @@
 package io.camunda.connectors;
 
 import io.camunda.connector.sdk.ConnectorFunction;
+import io.camunda.connector.sdk.SecretProvider;
 import io.camunda.connector.sdk.ZeebeConnector;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.worker.JobWorker;
@@ -32,6 +33,9 @@ public class ConnectorRegistry {
 
     @Autowired
     private ZeebeClient zeebeClient;
+
+    @Autowired
+    private SecretProvider secretProvider;
 
     @PostConstruct
     private void scanForConnectors() {
@@ -80,7 +84,7 @@ public class ConnectorRegistry {
                     JobWorker jobWorker = zeebeClient
                             .newWorker()
                             .jobType(connectorConfig.getTaskType())
-                            .handler(new ConnectorJobHandler(connectorConfig.getConnectorFunction()))
+                            .handler(new ConnectorJobHandler(connectorConfig.getConnectorFunction(), secretProvider))
                             .timeout(Duration.ofSeconds(10))
                             .name(connectorConfig.getConnectorName())
                             .fetchVariables(connectorConfig.getVariablesToFetch())

@@ -7,17 +7,19 @@ import io.camunda.zeebe.client.api.response.ActivatedJob;
 
 import java.util.ServiceLoader;
 
-class ConnectorJobHandlerContext implements ConnectorContext {
+public class ConnectorJobHandlerContext implements ConnectorContext {
 
     private final ActivatedJob job;
+    private SecretProvider secretProvider;
 
-    public ConnectorJobHandlerContext(ActivatedJob job) {
+    public ConnectorJobHandlerContext(ActivatedJob job, SecretProvider secretProvider) {
         this.job = job;
+        this.secretProvider = secretProvider;
     }
 
     @Override
     public SecretStore getSecretStore() {
-        return new SecretStore(getSecretProvider());
+        return new SecretStore(secretProvider);
     }
 
     @Override
@@ -30,16 +32,4 @@ class ConnectorJobHandlerContext implements ConnectorContext {
         return job.getVariables();
     }
 
-    protected SecretProvider getSecretProvider() {
-        return ServiceLoader.load(SecretProvider.class).findFirst().orElse(getEnvSecretProvider());
-    }
-
-    protected SecretProvider getEnvSecretProvider() {
-        return new SecretProvider() {
-            @Override
-            public String getSecret(String value) {
-                return System.getenv(value);
-            }
-        };
-    }
 }
