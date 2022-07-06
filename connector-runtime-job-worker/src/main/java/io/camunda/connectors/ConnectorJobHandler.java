@@ -2,6 +2,7 @@ package io.camunda.connectors;
 
 import io.camunda.connector.sdk.ConnectorFunction;
 import io.camunda.connector.sdk.SecretProvider;
+import io.camunda.zeebe.client.api.command.CompleteJobCommandStep1;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
 import io.camunda.zeebe.client.api.worker.JobClient;
 import io.camunda.zeebe.client.api.worker.JobHandler;
@@ -30,7 +31,11 @@ public class ConnectorJobHandler implements JobHandler {
     try {
 
       Object result = connectorFunction.execute(new ConnectorJobHandlerContext(job, secretProvider));
-      client.newCompleteCommand(job).variables(result).send().join();
+      CompleteJobCommandStep1 completeCommand = client.newCompleteCommand(job);
+      if (result!=null) {
+        completeCommand = completeCommand.variables(result);
+      }
+      completeCommand.send().join();
       LOGGER.info("Completed job {}", job.getKey());
 
     } catch (Exception error) {

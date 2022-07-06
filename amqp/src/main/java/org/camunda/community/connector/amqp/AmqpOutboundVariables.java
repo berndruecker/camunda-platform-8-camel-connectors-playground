@@ -15,7 +15,7 @@ public class AmqpOutboundVariables {
         password = secretStore.replaceSecret(password);
     }
     public String getEndpointUri() {
-        return "amqp:" + getDestinationType() + ":" + getDestinationName();
+        return "amqp:" + getDestinationType() + ":" + getDestinationName() + "?disableReplyTo=true";
         //+ "?username=" + getUsername() + "&password=RAW(" + getPassword() + ")";
     }
 

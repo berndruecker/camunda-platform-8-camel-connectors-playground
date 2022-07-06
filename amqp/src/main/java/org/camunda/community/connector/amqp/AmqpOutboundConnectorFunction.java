@@ -24,9 +24,10 @@ public class AmqpOutboundConnectorFunction implements ConnectorFunction {
 
         CamelContext camelContext = new DefaultCamelContext();
         AMQPComponent amqpComponent = AMQPComponent.amqpComponent(
-                variables.getAmqpUrl(),
-                variables.getUsername(),
-                variables.getPassword());
+                "amqp://localhost:5672");
+                //variables.getAmqpUrl(),
+                //variables.getUsername(),
+                //variables.getPassword());
         camelContext.addComponent("amqp", amqpComponent);
         camelContext.start();
 

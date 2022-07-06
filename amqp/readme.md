@@ -1,11 +1,20 @@
 
+To use AMQP with RabbitMQ, you need to enable the AMQP Plugin:
+
+Dockerfile:
+```
+FROM rabbitmq:3-management
+RUN echo '[rabbitmq_management,rabbitmq_management_visualiser,rabbitmq_amqp1_0].' > enabled_plugins
+RUN rabbitmq-plugins enable rabbitmq_amqp1_0
+```
 
 
 ```bash
 docker run --name zeebe -p 26500-26502:26500-26502 camunda/zeebe:latest
-docker run -p 15672:15672 -p 5672:5672 rabbitmq:3-management
+docker run -p 15672:15672 -p 5672:5672 >>>YOUROWNIMAGE<<<
 ```
 
+Now you can see RabbitMQ:
 * http://localhost:15672/#/queues/
 * User: guest
 * Password: guest
