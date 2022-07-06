@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1g10y1p" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.0.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.0.0">
+  <bpmn:process id="Process_18595wg" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_1sfnucz</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1sfnucz" sourceRef="StartEvent_1" targetRef="Gateway_17hyopb" />
+    <bpmn:endEvent id="Event_0frc743">
+      <bpmn:incoming>Flow_0atfclx</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0atfclx" sourceRef="Activity_02nntep" targetRef="Event_0frc743" />
+    <bpmn:serviceTask id="Activity_02nntep" name="Send AMQP message using Camel AMQP">
+      <bpmn:extensionElements>
+        <zeebe:taskHeaders>
+          <zeebe:header key="destinationType" value="queue" />
+          <zeebe:header key="destinationName" value="testQueue" />
+          <zeebe:header key="username" value="secrets.AMQP_USERNAME" />
+          <zeebe:header key="password" value="secrets.AMQP_PASSWORD" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1mtgh8z</bpmn:incoming>
+      <bpmn:outgoing>Flow_0atfclx</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0axm75i" name="Send to Camel Route">
+      <bpmn:extensionElements>
+        <zeebe:taskHeaders>
+          <zeebe:header key="camelRoute" value="amqp:queue:testQueue" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_16xq6g3</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rcxmi9</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1mtgh8z" sourceRef="Gateway_17hyopb" targetRef="Activity_02nntep" />
+    <bpmn:parallelGateway id="Gateway_17hyopb">
+      <bpmn:incoming>Flow_1sfnucz</bpmn:incoming>
+      <bpmn:outgoing>Flow_1mtgh8z</bpmn:outgoing>
+      <bpmn:outgoing>Flow_16xq6g3</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_16xq6g3" sourceRef="Gateway_17hyopb" targetRef="Activity_0axm75i" />
+    <bpmn:endEvent id="Event_1ao59g7">
+      <bpmn:incoming>Flow_0rcxmi9</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0rcxmi9" sourceRef="Activity_0axm75i" targetRef="Event_1ao59g7" />
+    <bpmn:serviceTask id="Activity_1mlllas" name="Apply Camel Route">
+      <bpmn:extensionElements>
+        <zeebe:taskHeaders>
+          <zeebe:header key="camelRouteSteps" value="  - from: (1)     uri: &#34;direct:start&#34;     steps: (2)       - filter:           expression:             simple: &#34;${in.header.continue} == true&#34;           steps: (2)             - to:                 uri: &#34;log:filtered&#34;       - to:           uri: &#34;log:original&#34;" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+    </bpmn:serviceTask>
+    <bpmn:textAnnotation id="TextAnnotation_07dxmj1">
+      <bpmn:text>THE FROM is automatically set (from this service task / direct in Camel world). But then we can go into the steps:
+
+  - steps:
+     - filter:
+          expression:
+            simple: "${in.header.continue} == true"
+          steps:
+            - to:
+                uri: "log:filtered"
+      - to:
+          uri: "log:original"
+
+See https://camel.apache.org/components/3.17.x/others/yaml-dsl.html</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0auolfr" sourceRef="Activity_1mlllas" targetRef="TextAnnotation_07dxmj1" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_18595wg">
+      <bpmndi:BPMNShape id="TextAnnotation_07dxmj1_di" bpmnElement="TextAnnotation_07dxmj1">
+        <dc:Bounds x="460" y="470" width="310" height="257" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1sfnucz_di" bpmnElement="Flow_1sfnucz">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="255" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0atfclx_di" bpmnElement="Flow_0atfclx">
+        <di:waypoint x="440" y="117" />
+        <di:waypoint x="482" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mtgh8z_di" bpmnElement="Flow_1mtgh8z">
+        <di:waypoint x="305" y="117" />
+        <di:waypoint x="340" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16xq6g3_di" bpmnElement="Flow_16xq6g3">
+        <di:waypoint x="280" y="142" />
+        <di:waypoint x="280" y="230" />
+        <di:waypoint x="340" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rcxmi9_di" bpmnElement="Flow_0rcxmi9">
+        <di:waypoint x="440" y="230" />
+        <di:waypoint x="482" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17tm01g_di" bpmnElement="Activity_02nntep">
+        <dc:Bounds x="340" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0t6ngar_di" bpmnElement="Activity_0axm75i">
+        <dc:Bounds x="340" y="190" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0qqqrsk_di" bpmnElement="Gateway_17hyopb">
+        <dc:Bounds x="255" y="92" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ao59g7_di" bpmnElement="Event_1ao59g7">
+        <dc:Bounds x="482" y="212" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0frc743_di" bpmnElement="Event_0frc743">
+        <dc:Bounds x="482" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0qpe905_di" bpmnElement="Activity_1mlllas">
+        <dc:Bounds x="340" y="320" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0auolfr_di" bpmnElement="Association_0auolfr">
+        <di:waypoint x="428" y="400" />
+        <di:waypoint x="496" y="470" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+  <name>connector-runtime-job-worker</name>
+  <description>Camunda Connector Run-Time Job Worker</description>
+  <artifactId>connector-runtime-job-worker</artifactId>
+  <packaging>jar</packaging>
+
+  <parent>
+    <groupId>io.camunda.connectors</groupId>
+    <artifactId>parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+
+  <properties>
+	  <maven.compiler.source>11</maven.compiler.source>
+	  <maven.compiler.target>11</maven.compiler.target>
+	  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	  <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <version.spring.zeebe>8.0.6</version.spring.zeebe>
+	  <spring.boot.version>2.7.1</spring.boot.version>
+  </properties>
+
+	<dependencies>
+		<dependency>
+		    <groupId>io.camunda</groupId>
+		    <artifactId>spring-zeebe-starter</artifactId>
+		    <version>${version.spring.zeebe}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.camunda.community.connector</groupId>
+			<artifactId>amqp-connector</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring.boot.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<configuration>
+					<mainClass> io.berndruecker.onboarding.customer.CustomerOnboardingSpringbootApplication</mainClass>
+				</configuration>
+			</plugin>
+			<!-- We would need this for JUnit 5
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M6</version>
+			</plugin>
+			 -->
+		</plugins>
+	</build>
+
+</project>
