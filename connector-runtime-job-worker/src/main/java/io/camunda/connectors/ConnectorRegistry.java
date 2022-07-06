@@ -19,6 +19,7 @@ import javax.annotation.PreDestroy;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.Set;
 
 @Component
@@ -35,22 +36,35 @@ public class ConnectorRegistry {
     @PostConstruct
     private void scanForConnectors() {
         try {
+            // Way 1 of fingint things: Classpath scanning. Slow if we do it on root level, but probably OK if we limit the packages (or make them configurable)
+            /*
             ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
             provider.addIncludeFilter(new AnnotationTypeFilter(ZeebeConnector.class));
             provider.addIncludeFilter(new AssignableTypeFilter(ConnectorFunction.class));
             Set<BeanDefinition> beanDefs = provider.findCandidateComponents("");
-                    // Scanning EVERYTHING takes a bit during startup - we could think about optimizing it (e.g. provide base packages)
-                    // We could also go for a ServiceLoader - but that would require to define a connector as a service
+
             for (BeanDefinition bean : beanDefs) {
                 String className = bean.getBeanClassName();
                 Class<? extends ConnectorFunction> connectorFunctionClass = (Class<? extends ConnectorFunction>) ClassUtils.forName(className, this.getClass().getClassLoader());
+                */
+
+            // Way 2: Use a service loader (if all connectors have the service configured)
+            ServiceLoader.load(ConnectorFunction.class).stream().forEach( connectorFunction -> {
+                Class<? extends ConnectorFunction> connectorFunctionClass = connectorFunction.type();
+
+                // Same from here on:
                 ZeebeConnector zeebeConnectorAnnotation =  connectorFunctionClass.getAnnotation(ZeebeConnector.class);
                 connectors.add(new ConnectorConfig(
                         zeebeConnectorAnnotation.name(),
                         zeebeConnectorAnnotation.taskType(),
                         zeebeConnectorAnnotation.variablesToFetch(),
+                        /* Way1:
                         connectorFunctionClass.getDeclaredConstructor().newInstance()));
-            }
+                        */
+                        // Way 2:
+                        connectorFunction.get()));
+
+            });
         } catch (Exception ex) {
             throw new RuntimeException("Could not initialize connectors: " + ex.getMessage(), ex);
         }
